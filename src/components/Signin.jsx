@@ -4,10 +4,12 @@ import AppleIcon from "@mui/icons-material/Apple";
 import GoogleIcon from "../assets/google-color-svgrepo-com.svg";
 import { useState } from "react";
 import axios from "axios";
+import {LoadingButton} from "@mui/lab";
 
 export default function Signin() {
 
   const [email,setEmail] = useState("");
+  const [isLoading,setIsLoading] = useState(false);
   const navigate=useNavigate();
 
   function handleEmailChange(event)
@@ -17,12 +19,14 @@ export default function Signin() {
 
   function handleSignin()
   {
+    setIsLoading(true);
     axios.post("http://localhost:3000/auth",{email:email}).then((response)=>
     {
       if(response.data.status===true)
       {
         sessionStorage.clear();
         sessionStorage.setItem("email",email);
+        setIsLoading(false);
         navigate("/verify-otp");
       }
     }).catch((err)=>
@@ -183,7 +187,8 @@ export default function Signin() {
             type="email"
             id="auth-signin-inputfield-email"
           ></TextField>
-          <Button
+          <LoadingButton
+            loading={isLoading}
             variant={"contained"}
             sx={{
               backgroundColor: "#611f69",
@@ -197,7 +202,7 @@ export default function Signin() {
             id="auth-signin-sign_in_with_email-btn"
           >
             Sign In With Email
-          </Button>
+          </LoadingButton>
           <Stack
             direction={"column"}
             justifyContent={"center"}

@@ -24,6 +24,8 @@ import { ApplicationState } from "../src/components/ContextProvider";
 import { useContext } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { socket } from "../src/socket";
+import {motion} from "framer-motion";
+const RotatingButton=motion(Button);
 import axios from "axios";
 const customeHandle = (
   <span
@@ -139,6 +141,9 @@ export default function HomeSubLayout() {
       )
       .then((coworkersData) => {
         setCoworkerArray(coworkersData.data.users);
+        setActiveTab(channelArray.filter(
+          (item) => item.workspaceId === activeWorkspace._id
+        )[0].name)
         navigate(
           `/home/channels/${
             channelArray.filter(
@@ -337,7 +342,7 @@ export default function HomeSubLayout() {
                   direction={"row"}
                   id="home-outlet-left-container-channels-header"
                 >
-                  <Button
+                  <RotatingButton
                     sx={{
                       color: "rgb(249,227,255,0.9)",
                       textTransform: "none",
@@ -349,13 +354,18 @@ export default function HomeSubLayout() {
                       width: "28px",
                       minWidth: "28px",
                     }}
+                    animate={{rotate:isChannelsExpanded || channelArray
+                      .filter((item) => item.workspaceId === activeWorkspace._id)
+                      .map((item) => item.name)
+                      .includes(activeTab)?90:0}}
+                    transition={{duration:0.2,ease:"backInOut"}}
                     onClick={() => {
                       setIsChannelsExpanded(!isChannelsExpanded);
                     }}
                     id="home-outlet-left-container-channels-expand-btn"
                   >
                     <PlayArrowIcon fontSize="12px" />
-                  </Button>
+                  </RotatingButton>
                   <Button
                     sx={{
                       color: "rgb(249,227,255,0.9)",
@@ -504,7 +514,7 @@ export default function HomeSubLayout() {
                   sx={{ flexShrink: 1 }}
                   id="home-outlet-left-container-dms-header"
                 >
-                  <Button
+                  <RotatingButton
                     sx={{
                       color: "rgb(249,227,255,0.9)",
                       textTransform: "none",
@@ -517,13 +527,15 @@ export default function HomeSubLayout() {
                       width: "28px",
                       flexShrink: 0,
                     }}
+                    animate={{rotate:isDirectMessageExpanded?90:0}}
+                    transition={{duration:0.3,ease:"backInOut"}}
                     onClick={() => {
                       setIsDirectMessageExpanded(!isDirectMessageExpanded);
                     }}
                     id="home-outlet-left-container-dms-expand-btn"
                   >
                     <PlayArrowIcon fontSize="12px" />
-                  </Button>
+                  </RotatingButton>
                   <Button
                     sx={{
                       color: "rgb(249,227,255,0.9)",
@@ -571,6 +583,9 @@ export default function HomeSubLayout() {
                     flexShrink: 0,
                   }}
                   id="home-outlet-left-container-dms-add_dm-btn"
+                  onClick={() => {
+                    setIsAddCoworkerModalOpen(true);
+                  }}
                 >
                   {isAddDirectMessageActive ? (
                     <AddIcon fontSize="small" />

@@ -27,12 +27,24 @@ export default function ChannelList() {
       .catch(() => {
         console.log("error occured while fetching all chennels");
       });
+
+      socket.on("channel-joining-failed",handleChannelJoiningFailed);
+
+      return ()=>{
+        socket.off("channel-joining-failed",handleChannelJoiningFailed);
+      }
   }, []);
+
+  function handleChannelJoiningFailed(status)
+  {
+    console.log(status);
+  }
 
   function handleChannelJoin(channelId) {
     socket.emit(
       "join-new-channel",
-      sessionStorage.getItem("userId"),
+      sessionStorage.getItem("token"),
+      activeWorkspace._id,
       channelId
     );
   }
@@ -44,126 +56,133 @@ export default function ChannelList() {
         direction={"column"}
         justifyContent={"center"}
       >
-        {allChannelArray.map((item, index) => (
-          <Stack
-            direction={"column"}
-            sx={{ width: "100%" }}
-            key={`channel${item.name}${index}`}
-            position={"relative"}
-            height={"80px"}
-            onMouseEnter={() => {
-              setFocusedChannel(item.name);
-            }}
-            onMouseLeave={() => {
-              setFocusedChannel("");
-            }}
-            justifyContent={"center"}
-          >
+        {allChannelArray
+          .filter((item) => item.workspaceId === activeWorkspace._id)
+          .map((item, index) => (
             <Stack
-              direction={"row"}
-              padding={"10px 10px 0 10px"}
-              gap={0.5}
-              alignItems={"center"}
-              boxSizing={"border-box"}
+              direction={"column"}
+              sx={{ width: "100%" }}
+              key={`channel${item.name}${index}`}
+              position={"relative"}
+              height={"80px"}
+              onMouseEnter={() => {
+                setFocusedChannel(item.name);
+              }}
+              onMouseLeave={() => {
+                setFocusedChannel("");
+              }}
+              justifyContent={"center"}
             >
-              <TagIcon
-                sx={{
-                  color: "rgba(0,0,0,0.8)",
-                  fontSize: "16px",
-                  fontWeight: 300,
-                }}
-              />
-              <Typography
-                sx={{
-                  color: "rgba(0,0,0,0.8)",
-                  fontSize: "15px",
-                  fontFamily: "lato",
-                  fontWeight: 600,
-                }}
-                noWrap
-              >
-                {item.name}
-              </Typography>
-            </Stack>
-            <Stack
-              direction={"row"}
-              padding={"0 10px 10px 10px"}
-              boxSizing={"border-box"}
-            >
-              <Typography
-                sx={{ fontSize: "13px", fontWeight: 350, fontFamily: "lato" }}
-              >
-                some random discriptioins of the channel
-              </Typography>
-            </Stack>
-            {focusedChannel === item.name ? (
               <Stack
                 direction={"row"}
+                padding={"10px 10px 0 10px"}
+                gap={0.5}
                 alignItems={"center"}
-                position={"absolute"}
-                right={"20px"}
-                top={0}
-                gap={2}
-                sx={{ transform: "translateY(50%)" }}
+                boxSizing={"border-box"}
               >
-                <Button
+                <TagIcon
                   sx={{
-                    height: "36px",
-                    borderRadius: "8px",
                     color: "rgba(0,0,0,0.8)",
-                    textTransform: "none",
-                    fontFamily: "lato",
-                    fontSize: "15px",
-                    fontWeight: 600,
-                    backgroundColor: "white",
-                    border: "1px rgba(0,0,0,0.3) solid",
+                    fontSize: "16px",
+                    fontWeight: 300,
                   }}
+                />
+                <Typography
+                  sx={{
+                    color: "rgba(0,0,0,0.8)",
+                    fontSize: "15px",
+                    fontFamily: "lato",
+                    fontWeight: 600,
+                  }}
+                  noWrap
                 >
-                  {channelArray.map((item) => item.name).includes(item.name)
-                    ? "Open in Home"
-                    : "View"}
-                </Button>
-                <Button
-                  sx={{
-                    height: "36px",
-                    borderRadius: "8px",
-                    color: "rgba(0,0,0,0.8)",
-                    textTransform: "none",
-                    fontFamily: "lato",
-                    fontSize: "15px",
-                    fontWeight: 600,
-                    backgroundColor: "white",
-                    border: "1px rgba(0,0,0,0.3) solid",
-                  }}
-                  onClick={() => {
-                    handleChannelJoin(item.name);
-                  }}
-                  disabled={
-                    channelArray
+                  {item.name}
+                </Typography>
+              </Stack>
+              <Stack
+                direction={"row"}
+                padding={"0 10px 10px 10px"}
+                boxSizing={"border-box"}
+              >
+                <Typography
+                  sx={{ fontSize: "13px", fontWeight: 350, fontFamily: "lato" }}
+                >
+                  some random discriptioins of the channel
+                </Typography>
+              </Stack>
+              {focusedChannel === item.name ? (
+                <Stack
+                  direction={"row"}
+                  alignItems={"center"}
+                  position={"absolute"}
+                  right={"20px"}
+                  top={0}
+                  gap={2}
+                  sx={{ transform: "translateY(50%)" }}
+                >
+                  <Button
+                    sx={{
+                      height: "36px",
+                      borderRadius: "8px",
+                      color: "rgba(0,0,0,0.8)",
+                      textTransform: "none",
+                      fontFamily: "lato",
+                      fontSize: "15px",
+                      fontWeight: 600,
+                      backgroundColor: "white",
+                      border: "1px rgba(0,0,0,0.3) solid",
+                    }}
+                  >
+                    {channelArray
                       .filter(
                         (item) => item.workspaceId === activeWorkspace._id
                       )
                       .map((item) => item.name)
                       .includes(item.name)
-                      ? true
-                      : false
-                  }
-                >
-                  {channelArray.map((item) => item.name).includes(item.name)
-                    ? "Joined"
-                    : "Join"}
-                </Button>
-              </Stack>
-            ) : (
-              <></>
-            )}
-            {index + 1 === channelArray.length ? (
-              <></>
-            ) : (
-              <Divider sx={{ marginTop: "10px" }} />
-            )}
-          </Stack>
-        ))}
+                      ? "Open in Home"
+                      : "View"}
+                  </Button>
+                  <Button
+                    sx={{
+                      height: "36px",
+                      borderRadius: "8px",
+                      color: "rgba(0,0,0,0.8)",
+                      textTransform: "none",
+                      fontFamily: "lato",
+                      fontSize: "15px",
+                      fontWeight: 600,
+                      backgroundColor: "white",
+                      border: "1px rgba(0,0,0,0.3) solid",
+                    }}
+                    onClick={() => {
+                      handleChannelJoin(item._id);
+                    }}
+                    disabled={
+                      channelArray
+                        .filter(
+                          (item) => item.workspaceId === activeWorkspace._id
+                        )
+                        .map((item) => item.name)
+                        .includes(item.name)
+                        ? true
+                        : false
+                    }
+                  >
+                    {channelArray.map((item) => item.name).includes(item.name)
+                      ? "Joined"
+                      : "Join"}
+                  </Button>
+                </Stack>
+              ) : (
+                <></>
+              )}
+              {index+1 === allChannelArray.filter((item)=>item.workspaceId===activeWorkspace._id).length ? (
+                <></>
+              ) : (
+                <Divider sx={{ marginTop: "10px" }} />
+              )}
+            </Stack>
+          ))}
       </Stack>
     </>
   );

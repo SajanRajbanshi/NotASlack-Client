@@ -9,53 +9,65 @@ import axios from "axios";
 
 export default function VerifyOtp() {
   const [values, setValues] = useState(Array(6).fill(""));
-  const textFieldRefs = Array.from({ length: 6 }, () => useRef(null));
-  const navigate=useNavigate();
+  const textFieldRefs = useRef([]);
+  const navigate = useNavigate();
 
-  const handleChange = (index) => (event) => {
-    const newValue = event.target.value;
-    const newValues = [...values];
-    newValues[index] = newValue;
+  function handleChange(index, event) {
+    let newValues = [...values];
+    newValues[index] = event.target.value;
     setValues(newValues);
-    if (index === 5) {
-      setTimeout(() => {
-        performVerification(newValues);
-      }, 0);
+    if(index===5)
+    {
+      performVerification(newValues);
     }
-    if (newValue.length === 1 && index < 5) {
-      textFieldRefs[index + 1].current.focus();
+    if(!event.target.value)
+    {
+      return;
     }
-
-    if (newValue.length===0 && index > 0) {
-      textFieldRefs[index - 1].current.focus();
+    if (index < 5 && textFieldRefs.current[index + 1]) {
+      textFieldRefs.current[index + 1].focus();
     }
-  };
+  }
+  function handleClick(index) {
+    let newValues = [...values];
+    newValues[index] = "";
+    setValues(newValues);
+  }
+  function handleKeyDown(index, event) {
+    if (
+      event.key === "Backspace" &&
+      index > 0 &&
+      !values[index]
+      &&
+      textFieldRefs.current[index - 1]
+    ) {
+      textFieldRefs.current[index - 1].focus();
+    }
+  }
 
   function performVerification(code) {
-    axios.post("http://localhost:3000/auth/verify-otp", {
-      email: sessionStorage.getItem("email"),code:code.join("")
-    }).then((response)=>
-    {
+    axios
+      .post("http://localhost:3000/auth/verify-otp", {
+        email: sessionStorage.getItem("email"),
+        code: code.join(""),
+      })
+      .then((response) => {
         console.log(response);
-        if(response.data.status)
-        {
-            if(response.data.isOldUser)
-            {
-                sessionStorage.setItem("token",response.data.token);
-                sessionStorage.setItem("userName",response.data.name);
-                navigate("/home");
-            }
-            else{
-                navigate("/set-name");
-            }
+        if (response.data.status) {
+          if (response.data.isOldUser) {
+            sessionStorage.setItem("token", response.data.token);
+            sessionStorage.setItem("userName", response.data.name);
+            navigate("/home");
+          } else {
+            navigate("/set-name");
+          }
+        } else {
+          console.log(response.data);
         }
-        else{
-            console.log(response.data);
-        }
-    }).catch((err)=>
-    {
+      })
+      .catch((err) => {
         console.log("error occured while verifying otp");
-    });
+      });
   }
 
   return (
@@ -136,9 +148,12 @@ export default function VerifyOtp() {
                     textAlign: "center",
                   },
                 }}
-                onChange={handleChange(0)}
+                onChange={(e) => handleChange(0, e)}
                 value={values[0]}
-                inputRef={textFieldRefs[0]}
+                inputRef={(el) => (textFieldRefs.current[0] = el)}
+                onKeyDown={(e) => handleKeyDown(0, e)}
+                onClick={()=>handleClick(0)}
+                inputProps={{ maxLength: 1 }}
                 autoComplete="off"
               ></TextField>
               <TextField
@@ -155,9 +170,12 @@ export default function VerifyOtp() {
                     textAlign: "center",
                   },
                 }}
-                onChange={handleChange(1)}
+                onChange={(e) => handleChange(1, e)}
                 value={values[1]}
-                inputRef={textFieldRefs[1]}
+                inputRef={(el) => (textFieldRefs.current[1] = el)}
+                onKeyDown={(e) => handleKeyDown(1, e)}
+                onClick={()=>handleClick(1)}
+                inputProps={{ maxLength: 1 }}
                 autoComplete="off"
               ></TextField>
               <TextField
@@ -174,9 +192,12 @@ export default function VerifyOtp() {
                     textAlign: "center",
                   },
                 }}
-                onChange={handleChange(2)}
+                onChange={(e) => handleChange(2, e)}
                 value={values[2]}
-                inputRef={textFieldRefs[2]}
+                inputRef={(el) => (textFieldRefs.current[2] = el)}
+                onKeyDown={(e) => handleKeyDown(2, e)}
+                onClick={()=>handleClick(2)}
+                inputProps={{ maxLength: 1 }}
                 autoComplete="off"
               ></TextField>
             </Stack>
@@ -210,9 +231,12 @@ export default function VerifyOtp() {
                     textAlign: "center",
                   },
                 }}
-                onChange={handleChange(3)}
+                onChange={(e) => handleChange(3, e)}
                 value={values[3]}
-                inputRef={textFieldRefs[3]}
+                inputRef={(el) => (textFieldRefs.current[3] = el)}
+                onKeyDown={(e) => handleKeyDown(3, e)}
+                onClick={()=>handleClick(3)}
+                inputProps={{ maxLength: 1 }}
                 autoComplete="off"
               ></TextField>
               <TextField
@@ -229,9 +253,12 @@ export default function VerifyOtp() {
                     textAlign: "center",
                   },
                 }}
-                onChange={handleChange(4)}
+                onChange={(e) => handleChange(4, e)}
                 value={values[4]}
-                inputRef={textFieldRefs[4]}
+                inputRef={(el) => (textFieldRefs.current[4] = el)}
+                onKeyDown={(e) => handleKeyDown(4, e)}
+                onClick={()=>handleClick(4)}
+                inputProps={{ maxLength: 1 }}
                 autoComplete="off"
               ></TextField>
               <TextField
@@ -248,9 +275,12 @@ export default function VerifyOtp() {
                     textAlign: "center",
                   },
                 }}
-                onChange={handleChange(5)}
+                onChange={(e) => handleChange(5, e)}
                 value={values[5]}
-                inputRef={textFieldRefs[5]}
+                inputRef={(el) => (textFieldRefs.current[5] = el)}
+                onKeyDown={(e) => handleKeyDown(5, e)}
+                onClick={()=>handleClick(5)}
+                inputProps={{ maxLength: 1 }}
                 autoComplete="off"
               ></TextField>
             </Stack>

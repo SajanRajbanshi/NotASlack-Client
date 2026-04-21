@@ -3,11 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import AppleIcon from "@mui/icons-material/Apple";
 import GoogleIcon from "../assets/google-color-svgrepo-com.svg";
 import axios from "axios";
+import { LoadingButton } from "@mui/lab";
 import { useState } from "react";
 
 export default function Signup() {
 
   const [email,setEmail] = useState("");
+  const [isLoading,setIsLoading] = useState(false);
   const navigate=useNavigate();
 function handleEmailChange(event)
 {
@@ -16,10 +18,12 @@ function handleEmailChange(event)
 
 function handleSignUp()
 {
+    setIsLoading(true);
     axios.post("http://localhost:3000/auth",{email:email}).then((response)=>
     {
       if(response.data.status===true)
       {
+        setIsLoading(false);
         sessionStorage.clear();
         sessionStorage.setItem("email",email);
         navigate("/verify-otp");
@@ -101,8 +105,9 @@ function handleSignUp()
             value={email}
             type="email"
           ></TextField>
-            <Button
+            <LoadingButton
               variant={"contained"}
+              loading={isLoading}
               sx={{
                 backgroundColor: "#611f69",
                 color: "#fff",
@@ -116,7 +121,7 @@ function handleSignUp()
               id="auth-signup-continue-btn"
             >
               Continue
-            </Button>
+            </LoadingButton>
           <Stack direction={"row"} gap={2} alignItems={"center"} id="auth-signup-input-divider">
             <Stack
               sx={{

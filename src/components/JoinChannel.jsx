@@ -74,7 +74,7 @@ export default function JoinChannel() {
                 fontSize: "15px",
                 fontWeight: 400,
               },
-              fontSize: "18px",
+              fontSize: "15px",
               fontFamily: "lato",
             }}
             slotProps={{

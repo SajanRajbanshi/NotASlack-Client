@@ -1,5 +1,5 @@
 import { Outlet, Link, useNavigate } from "react-router-dom";
-import { Button, Divider, IconButton, Stack, Typography } from "@mui/material";
+import { Button, Divider, IconButton, Stack, Typography, linearProgressClasses } from "@mui/material";
 import { motion } from "framer-motion";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -22,6 +22,7 @@ import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAlt";
 import { useState, useContext } from "react";
 import { ApplicationState } from "../src/components/ContextProvider";
+const RotatingButton=motion(Button);
 
 export default function HomeLayout() {
   const [moreMenuAnchor, setMoreMenuAnchor] = useState(null);
@@ -35,7 +36,7 @@ export default function HomeLayout() {
   const [profileMenuAnchor, setProfileMenuAnchor] = useState(null);
   const isProfileMenuOpen = Boolean(profileMenuAnchor);
   const userName = sessionStorage.getItem("userName");
-  const { workspaceArray,setActiveWorkspace } = useContext(ApplicationState);
+  const { workspaceArray,setActiveWorkspace,setActiveTab,activeWorkspace} = useContext(ApplicationState);
 
   function handleMoreMenuOpen(event) {
     setMoreMenuAnchor(event.currentTarget);
@@ -77,6 +78,7 @@ export default function HomeLayout() {
   function handleWorkspaceChange(newWorkspace)
   {
     setActiveWorkspace(newWorkspace);
+    setActiveTab(newWorkspace.channels[0].name);
   }
 
   return (
@@ -192,10 +194,7 @@ export default function HomeLayout() {
                 onClick={handleWorkspaceMenuOpen}
               >
                 <Typography sx={{ fontSize: "20px" }}>
-                  {workspaceArray[0].name.split(" ").length > 1
-                    ? workspaceArray[0].name.split(" ")[0][0].toUpperCase() +
-                      workspaceArray[0].name.split(" ")[0][1]
-                    : workspaceArray[0].name.slice(0, 2).toUpperCase()}
+                  {activeWorkspace.name.split().length>2?activeWorkspace.name.split()[0][0].toUpperCase()+activeWorkspace.name.split()[0][0].toUpperCase():activeWorkspace.name.slice(0,2).toUpperCase()}
                 </Typography>
               </Stack>
               <Stack
@@ -268,7 +267,7 @@ export default function HomeLayout() {
               sx={{ padding: "0 0 15px 0" }}
               id="home-body-right-menu-bottom"
             >
-              <Button
+              <RotatingButton
                 sx={{
                   width: "36px",
                   height: "36px",
@@ -277,11 +276,13 @@ export default function HomeLayout() {
                   backdropFilter: "blur(30)",
                   backgroundColor: "rgba(255,255,255,0.3)",
                 }}
+                animate={{rotate:isCreateMenuOpen?90:0}}
+                transition={{duration:0.2,ease:"easeInOut"}}
                 variant="contained"
                 onClick={handleCreateMenuOpen}
               >
                 <AddIcon sx={{ color: "white" }} />
-              </Button>
+              </RotatingButton>
               <Stack
                 sx={{
                   backgroundColor: "#c23b15",

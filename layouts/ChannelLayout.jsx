@@ -51,7 +51,6 @@ export default function ChannelLayout() {
                 }}
               >
                 {`# ${channelArray.filter((item)=>item._id===channelId)[0].name}`}
-                {/* {`# ${channelId}`} */}
               </Typography>
             </Button>
             <Stack>
