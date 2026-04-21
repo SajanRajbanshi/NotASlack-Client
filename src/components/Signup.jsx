@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import AppleIcon from "@mui/icons-material/Apple";
 import GoogleIcon from "../assets/google-color-svgrepo-com.svg";
 import axios from "axios";
+import { API_BASE_URL } from "../config";
+
 import { LoadingButton } from "@mui/lab";
 import { useState } from "react";
 
@@ -19,7 +21,7 @@ function handleEmailChange(event)
 function handleSignUp()
 {
     setIsLoading(true);
-    axios.post("http://localhost:3000/auth",{email:email}).then((response)=>
+    axios.post(`${API_BASE_URL}/auth`,{email:email}).then((response)=>
     {
       if(response.data.status===true)
       {

@@ -2,6 +2,8 @@ import { Stack, TextField, Typography, Button } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_BASE_URL } from "../config";
+
 export default function CreateWorkspace() {
   const [workspace, setWorkspace] = useState("");
   const navigate = useNavigate();
@@ -12,7 +14,7 @@ export default function CreateWorkspace() {
   }
 
   function handleCreateWorkspace() {
-    axios.post("http://localhost:3000/auth/signup", {
+    axios.post(`${API_BASE_URL}/auth/signup`, {
       email: sessionStorage.getItem("email"),
       name: sessionStorage.getItem("userName"),
       workspace: workspace,

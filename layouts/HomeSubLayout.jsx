@@ -27,6 +27,8 @@ import { socket } from "../src/socket";
 import {motion} from "framer-motion";
 const RotatingButton=motion(Button);
 import axios from "axios";
+import { API_BASE_URL } from "../src/config";
+
 const customeHandle = (
   <span
     style={{
@@ -131,7 +133,7 @@ export default function HomeSubLayout() {
   useEffect(() => {
     axios
       .post(
-        "http://localhost:3000/workspaces/coworkers",
+        `${API_BASE_URL}/workspaces/coworkers`,
         { workspaceId: activeWorkspace._id },
         {
           headers: {

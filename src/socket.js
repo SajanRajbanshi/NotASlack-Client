@@ -1,11 +1,13 @@
 import io from "socket.io-client";
+import { API_BASE_URL } from "./config";
+
 
 
 let socket=null;
 function connectSocket()
 {
     return new Promise((resolve, reject) => {
-        socket = io("http://localhost:3000");
+        socket = io(API_BASE_URL);
         
         socket.on("connected", (res) => {
             console.log(res)

@@ -4,6 +4,8 @@ import AppleIcon from "@mui/icons-material/Apple";
 import GoogleIcon from "../assets/google-color-svgrepo-com.svg";
 import { useState } from "react";
 import axios from "axios";
+import { API_BASE_URL } from "../config";
+
 import {LoadingButton} from "@mui/lab";
 
 export default function Signin() {
@@ -20,7 +22,7 @@ export default function Signin() {
   function handleSignin()
   {
     setIsLoading(true);
-    axios.post("http://localhost:3000/auth",{email:email}).then((response)=>
+    axios.post(`${API_BASE_URL}/auth`,{email:email}).then((response)=>
     {
       if(response.data.status===true)
       {

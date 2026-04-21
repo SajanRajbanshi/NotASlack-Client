@@ -3,6 +3,8 @@ import { useContext, useEffect, useState } from "react";
 import { ApplicationState } from "./ContextProvider";
 import TagIcon from "@mui/icons-material/Tag";
 import axios from "axios";
+import { API_BASE_URL } from "../config";
+
 import { socket } from "../socket";
 
 export default function ChannelList() {
@@ -13,7 +15,7 @@ export default function ChannelList() {
   useEffect(() => {
     axios
       .post(
-        "http://localhost:3000/channels/channels",
+        `${API_BASE_URL}/channels/channels`,
         { workspaceId: activeWorkspace._id },
         {
           headers: {

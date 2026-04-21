@@ -1,6 +1,8 @@
 import { createContext, useEffect, useState } from "react";
 import { socket, joinOldChannels } from "../../src/socket";
 import axios from "axios";
+import { API_BASE_URL } from "../config";
+
 import { useNavigate } from "react-router-dom";
 import LoadingScreen from "./LoadingScreen";
 
@@ -17,13 +19,13 @@ export function ContextProvider({ children }) {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/workspaces", {
+      .get(`${API_BASE_URL}/workspaces`, {
         headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
       })
       .then((workspaceData) => {
         if (workspaceData.data.status === true) {
           axios
-            .get("http://localhost:3000/channels", {
+            .get(`${API_BASE_URL}/channels`, {
               headers: {
                 Authorization: `Bearer ${sessionStorage.getItem("token")}`,
               },
@@ -32,7 +34,7 @@ export function ContextProvider({ children }) {
               if (channelData.data.status === true) {
                 axios
                   .post(
-                    "http://localhost:3000/messages",
+                    `${API_BASE_URL}/messages`,
                     { channels: channelData.data.channels },
                     {
                       headers: {

@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_BASE_URL } from "../config";
+
 
 export default function VerifyOtp() {
   const [values, setValues] = useState(Array(6).fill(""));
@@ -47,7 +49,7 @@ export default function VerifyOtp() {
 
   function performVerification(code) {
     axios
-      .post("http://localhost:3000/auth/verify-otp", {
+      .post(`${API_BASE_URL}/auth/verify-otp`, {
         email: sessionStorage.getItem("email"),
         code: code.join(""),
       })
